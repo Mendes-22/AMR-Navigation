@@ -15,7 +15,7 @@ imu = robot.getDevice('inertial unit'); imu.enable(timestep)
 motors = [robot.getDevice(n) for n in ['back left wheel', 'back right wheel', 'front left wheel', 'front right wheel']]
 for m in motors: m.setPosition(float('inf')); m.setVelocity(0.0)
 
-# 1. Load SLAM Map
+# Load SLAM Map
 try:
     grid_real = np.load('mapa_final_a_star.npy')
     print(">>> SLAM map loaded!")
@@ -40,7 +40,7 @@ while robot.step(timestep) != -1:
     ekf.update(np.array([[pos_current[0]], [pos_current[1]], [theta_current]]))
     xf, yf, tf = ekf.x.flatten()
 
-    # 2. AUTOMATIC PATH PLANNING + SHOWCASE PLOT
+    # AUTOMATIC PATH PLANNING + SHOWCASE PLOT
     if not is_calculated:
         print(f">>> AMR Start position: ({xf:.2f}, {yf:.2f})")
         start_node = world_to_grid(xf, yf)
@@ -67,7 +67,7 @@ while robot.step(timestep) != -1:
         else:
             print("❌ ERROR: Target not reachable!"); break
 
-    # 3. NAVIGATION
+    # NAVIGATION
     if is_calculated:
         # Check if there are points left to follow
         if point_idx < len(path):
@@ -104,7 +104,7 @@ while robot.step(timestep) != -1:
             print(f"🏁 TARGET POSITION REACHED: ({xf:.2f}, {yf:.2f})")
             break
 
-    # D. APPLY MOTORS
+    # APPLY MOTORS
     vl, vr = np.clip(v-w, -MAX_SPEED, MAX_SPEED), np.clip(v+w, -MAX_SPEED, MAX_SPEED)
     motors[0].setVelocity(vl); motors[2].setVelocity(vl)
     motors[1].setVelocity(vr); motors[3].setVelocity(vr)
